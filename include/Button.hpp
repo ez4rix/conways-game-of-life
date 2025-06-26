@@ -5,85 +5,70 @@
 class Button
 {
 public:
-    Button(Rectangle rec, std::string content, std::string pressedText, bool pressed, Color color = WHITE)
+    Button(Rectangle rec, std::string Text1, std::string Text2, int fontSize = 20)
         : rec(rec),
-          pos({rec.x, rec.y}),
-          content(content),
-          defaultText(content),
-          pressedText(pressedText),
-          pressed(pressed),
-          color(color)
-    {}
+          content(Text1),
+          Text1(Text1),
+          Text2(Text2)
+    {
+        TextToggleOnClick = false;
+        TextChangeOnClick = false;
+        pressed = false;
+        color = WHITE;
+        fontColor = BLACK;
+    }
 
     Click click;
-
     Rectangle rec;
-    Vector2 pos;
+
     std::string content;
-    std::string defaultText;
-    std::string pressedText;
+    std::string Text1;
+    std::string Text2;
+
+    bool TextToggleOnClick;
+    bool toggle;
+    bool TextChangeOnClick;
+
     bool pressed;
+
     Color color;
+    int fontSize = 20;
+    Color fontColor;
+    int offsetX = 10;
+    int offsetY = 20;
+
 
     void Draw()
     {
         DrawRectangleRec(rec, color);
-        DrawText(content.c_str(), pos.x + 10, pos.y + 20, 20, BLACK);
+        DrawText(content.c_str(), rec.x + offsetX, rec.y + offsetY, fontSize, fontColor);
     }
 
-    void IsPressed(Rectangle rec)
+
+    void Update()
     {
-        pressed = click.CheckClicked(rec, pressed);
+        Draw();
+        UpdateText();
     }
 
-    void UpdateTextOnPress(bool changeText, bool toggleText)
+    void UpdateText()
     {
-        if (!changeText) return;
+        if(!TextToggleOnClick && !TextChangeOnClick) return;
 
-        if (pressed)
+        pressed = click.IsClicked(rec);
+        
+        if(pressed)
         {
-            if (toggleText)
+            if(TextChangeOnClick) 
             {
-                content = (content == defaultText) ? pressedText : defaultText;
+                pressed == 0 ? content = Text1 : content = Text2;
             }
-            else
+            if(TextToggleOnClick) 
             {
-                content = pressedText;
+                toggle == false ? content = Text1 : content = Text2;
+                toggle = !toggle;
             }
         }
-        else if (!toggleText)
-        {
-            content = defaultText;
-        }
     }
 
-    void Update(bool changeText = true, bool toggleText = false)
-{
-    // Detect a single new click over the button
-    if (click.IsClick() && click.IsOver(rec))
-    {
-        // Toggle pressed state manually
-        if (toggleText)
-        {
-            pressed = !pressed;
-            content = (content == defaultText) ? pressedText : defaultText;
-        }
-        else if (changeText)
-        {
-            pressed = true;
-            content = pressedText;
-        }
-    }
-    else if (!toggleText)
-    {
-        pressed = false;
-        content = defaultText;
-    }
-    Draw();
-}
-
-    void SetPressedText(const std::string& text)
-    {
-        pressedText = text;
-    }
 };

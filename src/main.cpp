@@ -14,7 +14,12 @@ int main()
 
     Simulation simulation{cellSize, 720, 720};
 
-    Button pause({500, 730, 210, 60}, "Pause", "Play", 1);
+    Button pause({500, 730, 210, 60}, "Paused", "PLay", 0);
+    pause.TextToggleOnClick = true;
+
+    Button reset({170, 755, 70, 30}, "Reset", "", 0);
+    reset.offsetX = 7;
+    reset.offsetY = 7;
 
     int generation = 0;
     int liveCells = 0;
@@ -25,13 +30,19 @@ int main()
         BeginDrawing();
         ClearBackground(background);    
             
-        pause.Update(1, 1);
+        pause.Update();
+        reset.Update();
         simulation.Draw();
 
         DrawText(TextFormat("live cells: %d", liveCells), 10, 730, 20, WHITE);
         DrawText(TextFormat("generation: %d", generation), 10, 760, 20, WHITE);
 
-        if(pause.content == "Play")
+        if(reset.click.IsClicked(reset.rec))
+        {
+            generation = 0;
+        }
+
+        if(pause.toggle == true)
         {
             simulation.NextGeneation();
             generation++;

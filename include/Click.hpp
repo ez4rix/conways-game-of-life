@@ -7,13 +7,12 @@ public:
 
 bool pause;
 
-bool CheckClicked(Rectangle rec, bool pause)
+bool IsClicked(Rectangle rec)
 {
-    if(IsClick() && IsOver(rec)) return !pause;
-    else return pause; 
+    return CheckClicked() && IsOver(rec);
 }
 
-bool IsClick()
+bool CheckClicked()
 {
     return IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
